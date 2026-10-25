@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0b0b0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Trading Desk">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>Trading Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0f;
+    --card: #131318;
+    --border: #222228;
+    --green: #c8ff3d;
+    --green-dim: #9bcc2f;
+    --red: #ff5c5c;
+    --purple: #a78bfa;
+    --text: #f2f2f5;
+    --muted: #8b8b95;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 16px 100px;
+  }
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-dot {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #c8ff3d, #7dffb3);
+    border-radius: 10px;
+  }
+  .brand-name { font-weight: 700; font-size: 18px; }
+  .brand-sub { font-size: 12px; color: var(--muted); }
+  .live {
+    font-size: 12px;
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .live::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 900px) {
+    .main-grid {
+      grid-template-columns: 1.4fr 1fr;
+    }
+    .profit { font-size: 64px; }
+    .app { padding: 24px 24px 100px; }
+  }
+  .profit-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .profit {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    color: var(--green);
+    margin: 4px 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .balance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .mult { color: var(--green); font-weight: 600; }
+  .goals {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .goal {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 10px;
+    background: #1a1a20;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .goal.active {
+    background: #1f2a14;
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+  }
+  .chart-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, rgba(200,255,61,0.05));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-size: 12px;
+  }
+  .agents { margin-bottom: 16px; }
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .agent-row {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .agent {
+    min-width: 76px;
+    text-align: center;
+  }
+  .agent-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    margin: 0 auto 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    border: 2px solid #333;
+    transition: transform 0.2s;
+  }
+  .agent-icon:hover { transform: scale(1.08); }
+  .agent-name { font-size: 12px; font-weight: 500; }
+  .agent-pnl { font-size: 11px; color: var(--green); margin-top: 2px; }
+  .positions {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .pos-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #1f1f25;
+    font-size: 14px;
+  }
+  .pos-item:last-child { border: none; }
+  .pos-token { font-weight: 600; }
+  .pos-pnl.pos { color: var(--green); }
+  .pos-pnl.neg { color: var(--red); }
+  .terminal {
+    background: #0e0e12;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    color: #aaa;
+    min-height: 70px;
+    margin-top: 16px;
+  }
+  .slide-bar {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(480px, calc(100% - 32px));
+    background: #1a1a20;
+    border-radius: 999px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border: 1px solid var(--border);
+    z-index: 100;
+  }
+  .slide-knob {
+    width: 44px; height: 44px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #000;
+    cursor: pointer;
+  }
+  .slide-text {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo-dot"></div>
+        <div>
+          <div class="brand-name">Trading Desk</div>
+          <div class="brand-sub">6 agents · Gate Testnet</div>
+        </div>
+      </div>
+      <div class="live">LIVE</div>
+    </div>
+
+    <div class="main-grid">
+      <div>
+        <div class="profit-label">Günlük PnL</div>
+        <div class="profit" id="pnl">+$0.00</div>
+        <div class="balance-row">
+          <span>Bakiye <b id="balance">$0</b> <span class="mult" id="mult">1.00×</span></span>
+          <span id="stats">0 işlem · 0% win</span>
+        </div>
+
+        <div class="goals">
+          <div class="goal">1.5×</div>
+          <div class="goal">2×</div>
+          <div class="goal active">3× goal</div>
+          <div class="goal">4×</div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-placeholder">Equity chart</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="agents">
+          <div class="section-title">Agents <span style="color:var(--muted);font-weight:400">0 taranan</span></div>
+          <div class="agent-row">
+            <div class="agent"><div class="agent-icon" style="border-color:#c8ff3d;background:#1a2a10">S</div><div class="agent-name">Scout</div><div class="agent-pnl">+$0</div></div>
+            <div class="agent"><div class="agent-icon" style="border-color:#ff6b6b;background:#2a1010">R</div><div class="agent-name">Risk</div><div class="agent-pnl">+$0</div></div>
+            <div class="agent"><div class="agent-icon" style="border-color:#a78bfa;background:#1a102a">Z</div><div class="agent-name">Sizing</div><div class="agent-pnl">+$0</div></div>
+            <div class="agent"><div class="agent-icon" style="border-color:#60a5fa;background:#101a2a">E</div><div class="agent-name">Execution</div><div class="agent-pnl">+$0</div></div>
+            <div class="agent"><div class="agent-icon" style="border-color:#fbbf24;background:#2a2010">L</div><div class="agent-name">Logger</div><div class="agent-pnl">+$0</div></div>
+            <div class="agent"><div class="agent-icon" style="border-color:#f472b6;background:#2a1020">V</div><div class="agent-name">Reviewer</div><div class="agent-pnl">+$0</div></div>
+          </div>
+        </div>
+
+        <div class="positions">
+          <div class="section-title">Açık Pozisyonlar <span style="color:var(--muted)">0</span></div>
+          <div id="pos-list">
+            <div style="text-align:center;color:var(--muted);padding:24px 0;font-size:14px">Henüz açık işlem yok</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="terminal">
+      > sistem hazır<br>
+      > Gate Testnet bağlı<br>
+      > botlar bekliyor...
+    </div>
+  </div>
+
+  <div class="slide-bar">
+    <div class="slide-knob">›</div>
+    <div class="slide-text">slide to take profit</div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
